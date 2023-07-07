@@ -1,0 +1,35 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+  <MudAppBar Elevation="0" Dense="true">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Href="https://mudblazor.com/" Target="_blank" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
+  </MudAppBar>
+  <MudDrawer @bind-Open="_drawerOpen" Elevation="1" ClipMode="@DrawerClipMode.Docked" Breakpoint="@Breakpoint.Xs" Style="@_style">
+    <MudDrawerHeader>
+      <MudText Typo="Typo.h6">BlazorApp</MudText>
+    </MudDrawerHeader>
+    <NavMenu />
+  </MudDrawer>
+  <MudMainContent>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="content px-4">
+      @Body
+    </MudContainer>
+  </MudMainContent>
+</MudLayout>
+
+@code {
+  bool _drawerOpen = true;
+  string _style = $"background:{Colors.Blue.Lighten5};";
+
+  void DrawerToggle()
+  {
+    _drawerOpen = !_drawerOpen;
+  }
+}

@@ -1,0 +1,79 @@
+﻿@page "/jquerydatatables"
+@inject HttpClient Http
+@inject IJSRuntime JS
+@implements IDisposable
+@using BlazorApp.Shared
+@using BlazorApp.Models
+
+<PageTitle>Weather forecast - jquery Datatables</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">jquery Datatables</MudText>
+<MudText Class="mb-8">This component demonstrates fetching data from file.</MudText>
+
+<div class="d-flex flex-wrap mt-4">
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="Variant.Text" Min="5" Max="40000" Step="1000" />
+  <MudButton Disabled="@_loading" OnClick="RefreshForecastsAsync" Variant="Variant.Filled" Color="Color.Primary">
+    @if (_loading)
+    {
+      <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+      <MudText Class="ms-2">更新中</MudText>
+    }
+    else
+    {
+      <MudText>読込件数 更新</MudText>
+    }
+  </MudButton>
+</div>
+
+<table id="dt2" class="table table-bordered table-striped nowrap" style="width:100%">
+  <thead class="sticky-top">
+    <tr>
+      <th>Date</th>
+      <th>Temp. (C)</th>
+      <th>Summary</th>
+    </tr>
+  </thead>
+</table>
+
+
+@code {
+  int _dispNumber { get; set; } = 10000;
+  bool _loading = false;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await base.OnAfterRenderAsync(firstRender);
+
+    if (firstRender)
+    {
+      if (Http.BaseAddress is not null)
+      {
+        _loading = true;
+        string forecastsUrl = "sample-data/weather.json";
+        await JS.InvokeVoidAsync("DataTables2.buildDataTable", forecastsUrl);
+        _loading = false;
+      }
+    }
+  }
+
+  private async Task RefreshForecastsAsync()
+  {
+    _loading = true;
+    string forecastsUrl = _dispNumber switch
+    {
+      <= 5 => "sample-data/weather.json",
+      <= 1000 => "sample-data/weather1000.json",
+      <= 5000 => "sample-data/weather5000.json",
+      <= 10000 => "sample-data/weather10000.json",
+      <= 20000 => "sample-data/weather20000.json",
+      _ => "sample-data/weather40000.json"
+    };
+    _loading = false;
+    await JS.InvokeVoidAsync("DataTables2.refreshDataTable", forecastsUrl);
+  }
+
+  async void IDisposable.Dispose()
+  {
+    await JS.InvokeVoidAsync("DataTables2.destroyDataTable");
+  }
+}

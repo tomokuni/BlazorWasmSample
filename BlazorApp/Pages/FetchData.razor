@@ -1,0 +1,90 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+@using BlazorApp.Shared
+@using BlazorApp.Models
+
+<PageTitle>Weather forecast - MudTable</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Weather forecast</MudText>
+<MudText Class="mb-8">This component demonstrates fetching data from the file.</MudText>
+<div class="d-flex flex-wrap mt-4">
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="Variant.Text" Min="5" Max="40000" Step="1000" />
+  <MudButton Disabled="@_loading" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    @if (_loading)
+    {
+      <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+      <MudText Class="ms-2">更新中</MudText>
+    }
+    else
+    {
+      <MudText>読込件数 更新</MudText>
+    }
+  </MudButton>
+</div>
+<div class="d-flex flex-wrap mt-4">
+  <MudSwitch @bind-Checked="@_fixedHeader">Fixed Header</MudSwitch>
+  <MudSwitch @bind-Checked="@_fixedFooter">Fixed Footer</MudSwitch>
+  <MudSwitch @bind-Checked="@_hover" Color="Color.Primary">Hover</MudSwitch>
+  <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary">Dense</MudSwitch>
+  <MudSwitch @bind-Checked="@_striped" Color="Color.Tertiary">Striped</MudSwitch>
+  <MudSwitch @bind-Checked="@_bordered" Color="Color.Warning">Bordered</MudSwitch>
+  <MudSpacer />
+</div>
+<MudTable Items="_items" FixedHeader="@_fixedHeader" FixedFooter="@_fixedFooter" Dense="@_dense" Hover="@_hover" Bordered="@_bordered" Striped="@_striped" SortLabel="Sort By" Loading="@_loading" Elevation="0">
+  <HeaderContent>
+    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<WeatherForecast, object>(x=>x.Date)">Date</MudTableSortLabel></MudTh>
+    <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.TemperatureC)">Temp. (C)</MudTableSortLabel></MudTh>
+    <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.TemperatureF)">Temp. (F)</MudTableSortLabel></MudTh>
+    <MudTh><MudTableSortLabel SortBy="new Func<WeatherForecast, object>(x=>x.Summary!)">Summary</MudTableSortLabel></MudTh>
+  </HeaderContent>
+  <RowTemplate>
+    <MudTd DataLabel="Date">@context.Date</MudTd>
+    <MudTd DataLabel="Temp. (C)">@context.TemperatureC</MudTd>
+    <MudTd DataLabel="Temp. (F)">@context.TemperatureF</MudTd>
+    <MudTd DataLabel="Summary">@context.Summary</MudTd>
+  </RowTemplate>
+  <PagerContent>
+    <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+  </PagerContent>
+</MudTable>
+
+
+@code {
+  bool _fixedHeader = true;
+  bool _fixedFooter = false;
+  bool _dense = true;
+  bool _hover = true;
+  bool _striped = true;
+  bool _bordered = true;
+  bool _loading = true;
+  int _dispNumber { get; set; } = 10000;
+  IEnumerable<WeatherForecast>? _items = new List<WeatherForecast>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    _loading = true;
+    _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>("sample-data/weather.json"));
+    _loading = false;
+  }
+
+  async Task ProcessSomething()
+  {
+    _loading = true;
+    _items = new List<WeatherForecast>();
+    await Task.Delay(300);
+    await Task.Yield();
+
+    string fileName = _dispNumber switch
+    {
+      <= 5 => "sample-data/weather.json",
+      <= 1000 => "sample-data/weather1000.json",
+      <= 5000 => "sample-data/weather5000.json",
+      <= 10000 => "sample-data/weather10000.json",
+      <= 20000 => "sample-data/weather20000.json",
+      _ => "sample-data/weather40000.json"
+    };
+    _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>(fileName))!.Take(_dispNumber);
+    _loading = false;
+  }
+
+}

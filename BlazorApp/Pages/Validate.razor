@@ -1,0 +1,137 @@
+﻿@page "/validate"
+@using System.ComponentModel.DataAnnotations;
+
+<PageTitle>Validation</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Validation MudBlazor</MudText>
+<MudText Class="mb-8">This component demonstrates validate data.</MudText>
+
+
+<MudText Class="mb-8">MudBlazor Component</MudText>
+<div class="d-inline-flex mt-1">
+	@*SortMode*@
+	<MudSelect @bind-Value="@_margin" T="Margin" Label="Margin" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+		<MudSelectItem Value="@Margin.None" />
+		<MudSelectItem Value="@Margin.Normal" />
+		<MudSelectItem Value="@Margin.Dense" />
+	</MudSelect>
+	&nbsp;&nbsp;&nbsp;
+	<MudSpacer />
+	@*ResizeMode*@
+	<MudSelect @bind-Value="@_valiant" T="Variant" Label="Variant" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+		<MudSelectItem Value="@Variant.Text" />
+		<MudSelectItem Value="@Variant.Outlined" />
+		<MudSelectItem Value="@Variant.Filled" />
+	</MudSelect>
+</div>
+<br />
+<br />
+<MudForm Model="@model">
+	<div class="d-inline-flex mt-1">
+		<MudTextField @bind-Value="model.Name" For="@(() => model.Name)" Placeholder="Name" Label="Name *" Variant="_valiant" Margin="_margin" />
+		&nbsp;&nbsp;&nbsp;
+		<MudDatePicker @bind-Date="model.Date" For="@(() => model.Date)" Placeholder="Date" Label="Date" Editable="true" DisableToolbar="true" DisplayMonths="2" Variant="_valiant" Margin="_margin" />
+	</div>
+	<div class="d-inline-flex mt-1">
+		<MudTextField @bind-Value="model.Email" For="@(() => model.Email)" Placeholder="Email" Label="Email *" Variant="_valiant" Margin="_margin" />
+	  &nbsp;&nbsp;&nbsp;
+		<MudTextField @bind-Value="model.Phone" For="@(() => model.Phone)" Placeholder="Phone" Label="Phone *" Variant="_valiant" Margin="_margin" />
+	</div>
+	<div class="d-inline-flex mt-1">
+		<MudTextField @bind-Value="model.Address.ZipCode" For="@(() => model.Address.ZipCode)" Label="ZipCode" Variant="_valiant" Placeholder="ZipCode" Margin="_margin" Style="@_style" />
+		&nbsp;&nbsp;&nbsp;
+		<MudTextField @bind-Value="model.Address.Address1" For="@(() => model.Address.Address1)" Label="Address1" Variant="_valiant" Placeholder="Address1" Margin="_margin" Style="@_style" />
+		&nbsp;&nbsp;&nbsp;
+		<MudTextField @bind-Value="model.Address.Address2" For="@(() => model.Address.Address2)" Label="Address2" Variant="_valiant" Placeholder="Address2" Margin="_margin" Style="@_style" />
+	</div>
+</MudForm>
+<br />
+<br />
+<br />
+<MudText Class="mb-8">Defalut Blazor Component</MudText>
+<EditForm Model="@model">
+	<DataAnnotationsValidator />
+	<div>
+		Name <font color="red">*</font> :
+		<InputText @bind-Value="model.Name" class="textbox"/>
+		<ValidationMessage For="@(() => model.Name)" />
+	</div>
+	<br />
+	<div>
+		Date <font color="red">*</font> :
+		<InputDate @bind-Value="model.Date" class="textbox" />
+		<ValidationMessage For="@(() => model.Date)" />
+	</div>
+	<br />
+	<div>
+		Email <font color="red">*</font> :
+		<InputText @bind-Value="model.Email" class="textbox" /> 
+		<ValidationMessage For="@(() => model.Email)" />
+	</div>
+	<br />
+	<div>
+		Phone <font color="red">*</font> :
+		<InputText @bind-Value="model.Phone" class="textbox" /> 
+		<ValidationMessage For="@(() => model.Phone)" />
+	</div>
+	<br />
+	<div>
+		ZipCode <font color="red">*</font> :
+		<InputText @bind-Value="model.Address.ZipCode" class="textbox" /> 
+		<ValidationMessage For="@(() => model.Address.ZipCode)" />
+	</div>
+	<br />
+	<div>
+		Address1 <font color="red">*</font> :
+		<InputText @bind-Value="model.Address.Address1" class="textbox" /> 
+		<ValidationMessage For="@(() => model.Address.Address1)" />
+	</div>
+	<br />
+	<div>
+		Address2 <font color="red">*</font> :
+		<InputText @bind-Value="model.Address.Address2" class="textbox" /> 
+		<ValidationMessage For="@(() => model.Address.Address2)" />
+	</div>
+</EditForm>
+
+
+@code {
+	OrderModel model = new OrderModel();
+	string _style = $"background:{Colors.Blue.Lighten5};";
+	Margin _margin = Margin.Normal;
+	Variant _valiant = Variant.Text;
+
+
+	public class OrderModel
+	{
+		[Required]
+		[StringLength(8, MinimumLength = 4)]
+		public string Name { get; set; } = "";
+
+		[Required]
+		[EmailAddress]
+		public string Email { get; set; } = "";
+
+		[Required]
+		[Phone]
+		public string Phone { get; set; } = "";
+
+		public AddressModel Address { get; set; } = new AddressModel();
+
+		public class AddressModel
+		{
+			[Required]
+			public string ZipCode { get; set; } = "";
+			[Required]
+			public string Address1 { get; set; } = "";
+			[Required]
+			public string Address2 { get; set; } = "";
+			[Required]
+			public string Address3 { get; set; } = "";
+		}
+
+		[Required]
+		public DateTime? Date { get; set; }
+	}
+
+}

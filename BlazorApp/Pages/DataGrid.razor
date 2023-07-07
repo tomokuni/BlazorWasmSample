@@ -1,0 +1,153 @@
+﻿@page "/datagrid"
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using BlazorApp.Shared
+@using BlazorApp.Models
+
+<PageTitle>Weather forecast - MudDataGrid</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Weather forecast</MudText>
+<MudText Class="mb-8">This component demonstrates fetching data from the file.</MudText>
+
+@*読込件数設定、読み込み*@
+<div class="d-flex flex-wrap mt-4">
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="Variant.Text" Min="5" Max="40000" Step="1000" />
+  <MudButton Disabled="@_loading" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    @if (_loading)
+    {
+      <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+      <MudText Class="ms-2">更新中</MudText>
+    }
+    else
+    {
+      <MudText>読込件数 更新</MudText>
+    }
+  </MudButton>
+</div>
+<div class="d-inline-flex mt-1">
+  @*Filterable*@
+  <MudSwitch @bind-Checked="@_filter" Label="Filterable" />
+  &nbsp;&nbsp;&nbsp;
+  @*FilterMode*@
+  <MudSelect @bind-Value="@_filterMode" T="DataGridFilterMode" Label="FilterMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@DataGridFilterMode.Simple" />
+    <MudSelectItem Value="@DataGridFilterMode.ColumnFilterMenu" />
+    <MudSelectItem Value="@DataGridFilterMode.ColumnFilterRow" />
+  </MudSelect>
+  &nbsp;&nbsp;&nbsp;
+  @*FilterCaseSensitivity*@
+  <MudSelect @bind-Value="@_caseSensitivity" T="DataGridFilterCaseSensitivity" Label="FilterCaseSensitivity" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@DataGridFilterCaseSensitivity.Default" />
+    <MudSelectItem Value="@DataGridFilterCaseSensitivity.CaseInsensitive" />
+  </MudSelect>
+  &nbsp;&nbsp;&nbsp;
+  @*SortMode*@
+  <MudSelect @bind-Value="@_sortMode" T="SortMode" Label="SortMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@SortMode.None" />
+    <MudSelectItem Value="@SortMode.Single" />
+    <MudSelectItem Value="@SortMode.Multiple" />
+  </MudSelect>
+  &nbsp;&nbsp;&nbsp;
+  @*ResizeMode*@
+  <MudSelect @bind-Value="@_resizeMode" T="ResizeMode" Label="ResizeMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@ResizeMode.None" />
+    <MudSelectItem Value="@ResizeMode.Column" />
+    <MudSelectItem Value="@ResizeMode.Container" />
+  </MudSelect>
+</div>
+<div class="d-inline-flex mt-1">
+  @*Reordering*@
+  <MudSwitch @bind-Checked="@_reorderingEnabled" Color="Color.Primary" Label="DragDropColumnReordering" />
+  <MudSwitch @bind-Checked="@_applyDropClassesOnDragStarted" Color="Color.Primary" Label="ApplyDropClassesOnDragStarted" />
+  @*Etc*@
+  <MudSwitch @bind-Checked="@_hover" Color="Color.Primary" Label="Hover" />
+  <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary" Label="Dense" />
+  <MudSwitch @bind-Checked="@_striped" Color="Color.Tertiary" Label="Striped" />
+  <MudSwitch @bind-Checked="@_bordered" Color="Color.Warning" Label="Bordered" />
+  <MudSwitch @bind-Checked="@_stickyLeft" Color="Color.Info" Label="StickyLeft" />
+</div>
+
+@if (_items == null)
+{
+  <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+  <MudDataGrid T="WeatherForecast" Items="@_items" Elevation="0" QuickFilter="@_quickFilter" Loading="@_loading" SortMode="@_sortMode" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" ColumnResizeMode="@_resizeMode" Filterable="@_filter" Dense="@_dense" Hover="@_hover" Striped="@_striped" Bordered="@_bordered" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">MudDataGrid</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+      <PropertyColumn Property="x => x!.Date" title="Date" StickyLeft="@_stickyLeft" />
+      <PropertyColumn Property="x => x!.TemperatureC" title="Temp. (C)" />
+      <PropertyColumn Property="x => x!.TemperatureF" title="Temp. (F)" />
+      <PropertyColumn Property="x => x!.Summary" title="Summary" />
+    </Columns>
+    <PagerContent>
+      <MudDataGridPager T="WeatherForecast" PageSizeOptions="new int[]{10, 25, 50, 100}" />
+    </PagerContent>
+  </MudDataGrid>
+}
+
+
+@code {
+  int _dispNumber { get; set; } = 10000;
+  bool _filter = true;
+  DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
+  DataGridFilterCaseSensitivity _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+  SortMode _sortMode = SortMode.Single;
+  ResizeMode _resizeMode = ResizeMode.Container;
+  bool _reorderingEnabled = true;
+  bool _applyDropClassesOnDragStarted = false;
+  bool _hover = true;
+  bool _dense = true;
+  bool _striped = true;
+  bool _bordered = true;
+  bool _stickyLeft = true;
+  bool _loading = true;
+  IEnumerable<WeatherForecast>? _items = new List<WeatherForecast>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    _loading = true;
+    _items = await Http.GetFromJsonAsync<List<WeatherForecast>>("sample-data/weather.json");
+    _loading = false;
+  }
+
+  async Task ProcessSomething()
+  {
+    _loading = true;
+    _items = new List<WeatherForecast>();
+    await Task.Delay(300);
+    await Task.Yield();
+
+    string fileName = _dispNumber switch
+    {
+      <= 5 => "sample-data/weather.json",
+      <= 1000 => "sample-data/weather1000.json",
+      <= 5000 => "sample-data/weather5000.json",
+      <= 10000 => "sample-data/weather10000.json",
+      <= 20000 => "sample-data/weather20000.json",
+      _ => "sample-data/weather40000.json"
+    };
+    _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>(fileName))!.Take(_dispNumber);
+    _loading = false;
+  }
+
+  private string _searchString = "";
+  private Func<WeatherForecast, bool> _quickFilter => x =>
+    {
+      if (string.IsNullOrWhiteSpace(_searchString))
+        return true;
+
+      var str = $"{x.Date} {x.TemperatureC} {x.TemperatureF} {x.Summary}";
+      if (str.Contains(_searchString.ToLower()) || str.Contains(_searchString.ToUpper()))
+        return true;
+
+      return false;
+    };
+
+}
