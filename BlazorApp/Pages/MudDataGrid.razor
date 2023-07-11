@@ -64,7 +64,7 @@
 }
 else
 {
-  <MudBlazor.MudDataGrid T="WeatherForecast" Items="@_items" Elevation="0" QuickFilter="@_quickFilter" Loading="@_loading" SortMode="@_sortMode" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" ColumnResizeMode="@_resizeMode" Filterable="@_filter" Dense="@_dense" Hover="@_hover" Striped="@_striped" Bordered="@_bordered" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
+  <MudBlazor.MudDataGrid T="WeatherForecast" Items="@_items" Elevation="0" RowsPerPage=5 QuickFilter="@_quickFilter" Loading="@_loading" SortMode="@_sortMode" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" ColumnResizeMode="@_resizeMode" Filterable="@_filter" Dense="@_dense" Hover="@_hover" Striped="@_striped" Bordered="@_bordered" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
     <ToolBarContent>
       <MudText Typo="Typo.h6">MudDataGrid</MudText>
       <MudSpacer />
@@ -78,7 +78,7 @@ else
       <MudBlazor.PropertyColumn Property="x => x!.Summary" title="Summary" />
     </Columns>
     <PagerContent>
-      <MudDataGridPager T="WeatherForecast" PageSizeOptions="new int[]{10, 25, 50, 100, 500, 1000}" />
+      <MudDataGridPager T="WeatherForecast" PageSizeOptions="new int[]{5, 10, 25, 50, 100, 500, 1000}" />
     </PagerContent>
   </MudBlazor.MudDataGrid>
 }
