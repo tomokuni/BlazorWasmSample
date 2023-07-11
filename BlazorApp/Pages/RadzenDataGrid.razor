@@ -1,0 +1,168 @@
+﻿@page "/radzen_datagrid"
+@inject HttpClient Http
+@using System.Linq
+@using System.Net.Http.Json
+@using BlazorApp.Shared
+@using BlazorApp.Models
+
+<PageTitle>Weather forecast - RadzenDataGrid</PageTitle>
+
+<RadzenLabel Typo="Typo.h3" GutterBottom="true">Weather forecast</RadzenLabel>
+<RadzenLabel>This component demonstrates fetching data from the file.</RadzenLabel>
+
+@*読込件数設定、読み込み*@
+<div class="d-flex align-items-baseline">
+  <RadzenLabel Text="読込件数:" />&nbsp;&nbsp;&nbsp;
+  <RadzenFormField Text="読込件数" Variant="Radzen.Variant.Outlined">
+    <RadzenNumeric @bind-Value="_dispNumber" TValue="int" Min="5" Max="40000" Step="1000" TextAlign="TextAlign.Center" />
+  </RadzenFormField>&nbsp;&nbsp;&nbsp;
+  <RadzenButton Click="ProcessSomething" Text="@(_isLoading ? "更新中" : "読込件数 更新")" ButtonStyle="ButtonStyle.Primary" />
+</div>
+
+<div class="d-inline-flex flex-wrap mt-1 align-items-baseline">
+  @*AllowFiltering*@
+  <div><RadzenSwitch @bind-Value=@_allowFiltering /><RadzenLabel Text="Filtering" /></div>
+  &nbsp;&nbsp;&nbsp;
+  @*FilterMode*@
+  <RadzenFormField Text="FilterMode" Variant="Radzen.Variant.Outlined">
+    <RadzenDropDown @bind-Value=@_filterMode Data=@(Enum.GetValues(typeof(FilterMode)).Cast<FilterMode>().ToList()) Disabled=@(!_allowFiltering) />
+  </RadzenFormField>
+  &nbsp;&nbsp;&nbsp;
+  @*FilterPopupRenderMode*@
+  <RadzenFormField Text="FilterPopupRenderMode" Variant="Radzen.Variant.Text">
+    <RadzenDropDown @bind-Value=@_filterPopupRenderMode Data=@(Enum.GetValues(typeof(PopupRenderMode)).Cast<PopupRenderMode>().ToList()) Disabled=@(!_allowFiltering) />
+  </RadzenFormField>
+  &nbsp;&nbsp;&nbsp;
+  @*FilterCaseSensitivity*@
+  <RadzenFormField Text="FilterCaseSensitivity" Variant="Radzen.Variant.Flat">
+    <RadzenDropDown @bind-Value=@_filterCaseSensitivity Data=@(Enum.GetValues(typeof(FilterCaseSensitivity)).Cast<FilterCaseSensitivity>().ToList()) Disabled=@(!_allowFiltering) />
+  </RadzenFormField>
+  &nbsp;&nbsp;&nbsp;
+  @*LogicalFilterOperator*@
+  <RadzenFormField Text="LogicalFilterOperator" Variant="Radzen.Variant.Filled">
+    <RadzenDropDown @bind-Value=@_logicalFilterOperator Data=@(Enum.GetValues(typeof(LogicalFilterOperator)).Cast<LogicalFilterOperator>().ToList()) Disabled=@(!_allowFiltering) />
+  </RadzenFormField>
+  &nbsp;&nbsp;&nbsp;
+</div>
+<div class="d-inline-flex flex-wrap mt-1 align-items-baseline">
+  @*AllowSorting*@
+  <div><RadzenSwitch @bind-Value=@_allowSorting /><RadzenLabel Text="AllowSorting " /></div>
+  &nbsp;&nbsp;&nbsp;
+  @*AllowMultiColumnSorting*@
+  <div><RadzenSwitch @bind-Value=@_allowMultiColumnSorting /><RadzenLabel Text="AllowMultiColumnSorting " /></div>
+  &nbsp;&nbsp;&nbsp;
+</div>
+<div class="d-inline-flex flex-wrap mt-1 align-items-baseline">
+  @*AllowColumnResize*@
+  <div><RadzenSwitch @bind-Value=@_allowColumnResize /><RadzenLabel Text="AllowColumnResize " /></div>
+  &nbsp;&nbsp;&nbsp;
+  @*AllowColumnReorder*@
+  <div><RadzenSwitch @bind-Value=@_allowColumnReorder /><RadzenLabel Text="AllowColumnReorder " /></div>
+  &nbsp;&nbsp;&nbsp;
+</div>
+<div class="d-inline-flex flex-wrap mt-1 align-items-baseline">
+  @*Density*@
+  <RadzenSelectBar @bind-Value=@_density TextProperty="Text" ValueProperty="Value"
+                   Data="@(Enum.GetValues(typeof(Density)).Cast<Density>().Select(t => new { Text = $"{t}", Value = t }))" Size="ButtonSize.Small" />
+  @*AllowColumnPicking*@
+  <div><RadzenSwitch @bind-Value=@_allowColumnPicking /><RadzenLabel Text="AllowColumnPicking " /></div>
+  &nbsp;&nbsp;&nbsp;
+</div>
+
+<Radzen.Blazor.RadzenDataGrid Data=@_items TItem=WeatherForecast
+                              AllowFiltering=@_allowFiltering FilterMode=@_filterMode FilterPopupRenderMode=@_filterPopupRenderMode
+                              FilterCaseSensitivity=@_filterCaseSensitivity LogicalFilterOperator=@_logicalFilterOperator
+                              AllowSorting=@_allowSorting AllowMultiColumnSorting=@_allowMultiColumnSorting ShowMultiColumnSortingIndex="true"
+                              AllowColumnResize=@_allowColumnResize AllowColumnReorder=@_allowColumnReorder
+                              AllowPaging="true" PageSize=@_pageSize Density=@_density AllowColumnPicking=@_allowColumnPicking
+                              ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Right"
+                              IsLoading=@_isLoading Sort="@ShowLoading" Page="@ShowLoading" Group="@ShowLoading" Filter="@ShowLoading">
+  <HeaderTemplate>
+    @*PageSize*@
+    <RadzenFormField Text="PageSize" Variant="Radzen.Variant.Outlined">
+      <RadzenDropDown @bind-Value=@_pageSize Data=@(new [] {5, 10, 25, 50, 100, 500, 1000}) Disabled=@(!_allowFiltering) />
+    </RadzenFormField>
+    &nbsp;&nbsp;&nbsp;
+    @*PageSize*@
+    <RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export("excel"))" />
+    &nbsp;&nbsp;&nbsp;
+  </HeaderTemplate>
+  <Columns>
+    <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Date" />
+    <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureC" Title="Temp. (C)" />
+    <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureF" Title="Temp. (F)" />
+    <RadzenDataGridColumn TItem="WeatherForecast" Property="Summary" Title="Summary" />
+  </Columns>
+</Radzen.Blazor.RadzenDataGrid>
+
+
+@code {
+  bool _isLoading = true;
+  int _dispNumber { get; set; } = 10000;
+  bool _allowFiltering = true;
+  FilterMode _filterMode = FilterMode.Simple;
+  PopupRenderMode _filterPopupRenderMode = PopupRenderMode.OnDemand;
+  FilterCaseSensitivity _filterCaseSensitivity = FilterCaseSensitivity.Default;
+  LogicalFilterOperator _logicalFilterOperator = LogicalFilterOperator.And;
+  bool _allowSorting = true;
+  bool _allowMultiColumnSorting = true;
+  bool _allowColumnResize = true;
+  bool _allowColumnReorder = true;
+  int _pageSize = 5;
+  Density _density = Density.Compact;
+  bool _allowColumnPicking = true;
+  IEnumerable<WeatherForecast>? _items = new List<WeatherForecast>();
+
+  protected override async Task OnInitializedAsync()
+  {
+    _isLoading = true;
+    _items = await Http.GetFromJsonAsync<List<WeatherForecast>>("sample-data/weather.json");
+    _isLoading = false;
+  }
+
+  async Task ProcessSomething()
+  {
+    _isLoading = true;
+    _items = new List<WeatherForecast>();
+    await Task.Delay(1);
+
+    string fileName = _dispNumber switch
+    {
+      <= 5 => "sample-data/weather.json",
+      <= 1000 => "sample-data/weather1000.json",
+      <= 5000 => "sample-data/weather5000.json",
+      <= 10000 => "sample-data/weather10000.json",
+      <= 20000 => "sample-data/weather20000.json",
+      _ => "sample-data/weather40000.json"
+    };
+    _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>(fileName))!.Take(_dispNumber);
+    _isLoading = false;
+  }
+
+  async Task ShowLoading()
+  {
+    _isLoading = true;
+
+    await Task.Yield();
+
+    _isLoading = false;
+  }
+  private string _searchString = "";
+  private Func<WeatherForecast, bool> _quickFilter => x =>
+    {
+      if (string.IsNullOrWhiteSpace(_searchString))
+        return true;
+
+      var str = $"{x.Date} {x.TemperatureC} {x.TemperatureF} {x.Summary}";
+      if (str.Contains(_searchString.ToLower()) || str.Contains(_searchString.ToUpper()))
+        return true;
+
+      return false;
+    };
+
+
+  public void Export(string type)
+  {
+  }
+
+}

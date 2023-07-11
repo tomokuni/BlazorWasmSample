@@ -18,10 +18,10 @@
 	&nbsp;&nbsp;&nbsp;
 	<MudSpacer />
 	@*ResizeMode*@
-	<MudSelect @bind-Value="@_valiant" T="Variant" Label="Variant" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
-		<MudSelectItem Value="@Variant.Text" />
-		<MudSelectItem Value="@Variant.Outlined" />
-		<MudSelectItem Value="@Variant.Filled" />
+	<MudSelect @bind-Value="@_valiant" T="MudBlazor.Variant" Label="Variant" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+		<MudSelectItem Value="@MudBlazor.Variant.Text" />
+		<MudSelectItem Value="@MudBlazor.Variant.Outlined" />
+		<MudSelectItem Value="@MudBlazor.Variant.Filled" />
 	</MudSelect>
 </div>
 <br />
@@ -101,7 +101,7 @@
 	OrderModel model = new OrderModel();
 	string _style = $"background:{Colors.Blue.Lighten5};";
 	Margin _margin = Margin.Normal;
-	Variant _valiant = Variant.Text;
+	MudBlazor.Variant _valiant = MudBlazor.Variant.Text;
 
 
 	public class OrderModel

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using MudBlazor.Services;
 
+using Radzen;
+
 namespace BlazorApp;
 public class Program
 {
@@ -14,9 +16,16 @@ public class Program
     builder.RootComponents.Add<App>("#app");
     builder.RootComponents.Add<HeadOutlet>("head::after");
 
+    // MudBlazor
     builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
     builder.Services.AddMudServices();
 
-    await builder.Build().RunAsync();
+    // Radzeb
+		builder.Services.AddScoped<DialogService>();
+		builder.Services.AddScoped<NotificationService>();
+		builder.Services.AddScoped<TooltipService>();
+		builder.Services.AddScoped<ContextMenuService>();
+
+		await builder.Build().RunAsync();
   }
 }

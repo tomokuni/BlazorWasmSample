@@ -11,8 +11,8 @@
 <MudText Class="mb-8">This component demonstrates fetching data from file.</MudText>
 
 <div class="d-flex flex-wrap mt-4">
-  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="Variant.Text" Min="5" Max="40000" Step="1000" />
-  <MudButton Disabled="@_loading" OnClick="RefreshForecastsAsync" Variant="Variant.Filled" Color="Color.Primary">
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="MudBlazor.Variant.Text" Min="5" Max="40000" Step="1000" />
+  <MudButton Disabled="@_loading" OnClick="RefreshForecastsAsync" Variant="MudBlazor.Variant.Filled" Color="Color.Primary">
     @if (_loading)
     {
       <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
