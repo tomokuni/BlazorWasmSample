@@ -7,14 +7,14 @@
 
 <PageTitle>Weather forecast - RadzenDataGrid</PageTitle>
 
-<RadzenLabel Typo="Typo.h3" GutterBottom="true">Weather forecast</RadzenLabel>
+<RadzenLabel Typo="Typo.h3" GutterBottom="true">Weather forecast - RadzenDataGrid</RadzenLabel>
 <RadzenLabel>This component demonstrates fetching data from the file.</RadzenLabel>
 
 @*読込件数設定、読み込み*@
 <div class="d-flex align-items-baseline">
   <RadzenLabel Text="読込件数:" />&nbsp;&nbsp;&nbsp;
   <RadzenFormField Text="読込件数" Variant="Radzen.Variant.Outlined">
-    <RadzenNumeric @bind-Value="_dispNumber" TValue="int" Min="5" Max="40000" Step="1000" TextAlign="TextAlign.Center" />
+    <RadzenNumeric @bind-Value="_dispNumber" TValue="int"  Min="5" Max="40000" Step="1000" TextAlign="TextAlign.Center" />
   </RadzenFormField>&nbsp;&nbsp;&nbsp;
   <RadzenButton Click="ProcessSomething" Text="@(_isLoading ? "更新中" : "読込件数 更新")" ButtonStyle="ButtonStyle.Primary" />
 </div>
@@ -69,7 +69,8 @@
   &nbsp;&nbsp;&nbsp;
 </div>
 
-<Radzen.Blazor.RadzenDataGrid Data=@_items TItem=WeatherForecast
+<br />
+<Radzen.Blazor.RadzenDataGrid Data=@_items TItem=WeatherForecast 
                               AllowFiltering=@_allowFiltering FilterMode=@_filterMode FilterPopupRenderMode=@_filterPopupRenderMode
                               FilterCaseSensitivity=@_filterCaseSensitivity LogicalFilterOperator=@_logicalFilterOperator
                               AllowSorting=@_allowSorting AllowMultiColumnSorting=@_allowMultiColumnSorting ShowMultiColumnSortingIndex="true"
@@ -78,14 +79,16 @@
                               ShowPagingSummary="true" PagerHorizontalAlign="HorizontalAlign.Right"
                               IsLoading=@_isLoading Sort="@ShowLoading" Page="@ShowLoading" Group="@ShowLoading" Filter="@ShowLoading">
   <HeaderTemplate>
-    @*PageSize*@
-    <RadzenFormField Text="PageSize" Variant="Radzen.Variant.Outlined">
-      <RadzenDropDown @bind-Value=@_pageSize Data=@(new [] {5, 10, 25, 50, 100, 500, 1000}) Disabled=@(!_allowFiltering) />
-    </RadzenFormField>
-    &nbsp;&nbsp;&nbsp;
-    @*PageSize*@
-    <RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export("excel"))" />
-    &nbsp;&nbsp;&nbsp;
+    <div class="d-inline-flex flex-wrap align-items-baseline">
+      @*PageSize*@
+      <RadzenFormField Text="PageSize" Variant="Radzen.Variant.Outlined">
+        <RadzenDropDown @bind-Value=@_pageSize Data=@(new [] {5, 10, 25, 50, 100, 500, 1000}) Disabled=@(!_allowFiltering) />
+      </RadzenFormField>
+      &nbsp;&nbsp;&nbsp;
+      @*PageSize*@
+      <RadzenButton Text="Export XLS" Icon="grid_on" Click="@(args => Export("excel"))" />
+      &nbsp;&nbsp;&nbsp;
+    </div>
   </HeaderTemplate>
   <Columns>
     <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Date" />
@@ -159,7 +162,6 @@
 
       return false;
     };
-
 
   public void Export(string type)
   {

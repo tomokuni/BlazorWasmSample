@@ -1,0 +1,92 @@
+﻿@page "/radzen_datagrid2"
+@inject HttpClient Http
+@using System.Linq
+@using System.Net.Http.Json
+@using System.Linq.Dynamic.Core
+@using BlazorApp.Shared
+@using BlazorApp.Models
+
+<PageTitle>Weather forecast - RadzenDataGrid</PageTitle>
+
+<RadzenLabel Typo="Typo.h3" GutterBottom="true">Weather forecast - RadzenDataGrid</RadzenLabel>
+<RadzenLabel>This component demonstrates fetching data from the file.</RadzenLabel>
+
+<RadzenStack Gap="2rem">
+  <RadzenStack Orientation="Radzen.Orientation.Horizontal" Gap="0.5rem" AlignItems="Radzen.AlignItems.Center" Class="rz-p-4 rz-border-radius-1" Style="border: var(--rz-grid-cell-border);">
+    <RadzenCheckBox @bind-Value="@auto" Name="auto" />
+    <RadzenLabel Text="Auto filter" Component="auto" Class="rz-me-6" />
+    <RadzenButton Text="Apply Filter" Click="@(args => dataFilter.Filter())" Disabled="@auto" Size="ButtonSize.Small" />
+  </RadzenStack>
+
+  <RadzenDataFilter @ref="dataFilter" Auto=auto Data="@orders" TItem="WeatherForecast" ViewChanged=@(view => ordersGrid.Reload())>
+    <Properties>
+      <RadzenDataFilterProperty TItem="WeatherForecast" Property="Date" Title="Date" />
+      <RadzenDataFilterProperty TItem="WeatherForecast" Property="TemperatureC" Title="Temp. (C)" />
+      <RadzenDataFilterProperty TItem="WeatherForecast" Property="TemperatureF" Title="Temp. (F)" />
+      <RadzenDataFilterProperty TItem="WeatherForecast" Property="Summary" Title="Summary" />
+    </Properties>
+  </RadzenDataFilter>
+
+  <Radzen.Blazor.RadzenDataGrid @ref="ordersGrid" AllowPaging="true" AllowSorting="true" IsLoading="@isLoading"
+                                Data="@(filteredOrders)" TItem="WeatherForecast" Count="@count" LoadData="@LoadData"
+                                ColumnWidth="200px" PageSize="20" Style="height: 500px">
+    <Columns>
+      <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Date" />
+      <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureC" Title="Temp. (C)" />
+      <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureF" Title="Temp. (F)" />
+      <RadzenDataGridColumn TItem="WeatherForecast" Property="Summary" Title="Summary" />
+    </Columns>
+  </Radzen.Blazor.RadzenDataGrid>
+</RadzenStack>
+
+@code {
+  bool isLoading;
+  int count;
+  bool auto = true;
+  RadzenDataFilter<WeatherForecast> dataFilter = new();
+
+  IEnumerable<WeatherForecast> filteredOrders = Enumerable.Empty<WeatherForecast>();
+  IEnumerable<WeatherForecast> orders = Enumerable.Empty<WeatherForecast>();
+  RadzenDataGrid<WeatherForecast> ordersGrid = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    await base.OnInitializedAsync();
+
+    orders = Enumerable.Empty<WeatherForecast>();
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await base.OnAfterRenderAsync(firstRender);
+  }
+
+  async Task LoadData(LoadDataArgs args)
+  {
+    isLoading = true;
+
+    await Task.Yield();
+
+    // This demo is using https://dynamic-linq.net
+    var items = await Http.GetFromJsonAsync<List<WeatherForecast>>("sample-data/weather1000.json");
+
+    var query = items!.AsQueryable();
+
+    // Filter via the Where method
+    query = query.Where(dataFilter);
+
+    if (!string.IsNullOrEmpty(args.OrderBy))
+    {
+      // Sort via the OrderBy method
+      query = query.OrderBy(args.OrderBy);
+    }
+
+    // Important!!! Make sure the Count property of RadzenDataGrid is set.
+    count = query.Count();
+
+    // Perform paging via Skip and Take.
+    filteredOrders = query.Skip(args.Skip!.Value).Take(args.Top!.Value).ToList();
+
+    isLoading = false;
+  }
+}

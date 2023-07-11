@@ -6,85 +6,76 @@
 
 <PageTitle>Weather forecast - MudDataGrid</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Weather forecast</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Weather forecast - MudDataGrid</MudText>
 <MudText Class="mb-8">This component demonstrates fetching data from the file.</MudText>
 
 @*読込件数設定、読み込み*@
-<div class="d-flex flex-wrap mt-4">
-  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="MudBlazor.Variant.Text" Min="5" Max="40000" Step="1000" />
-  <MudButton Disabled="@_loading" OnClick="ProcessSomething" Variant="MudBlazor.Variant.Filled" Color="Color.Primary">
-    @if (_loading)
-    {
-      <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-      <MudText Class="ms-2">更新中</MudText>
-    }
-    else
-    {
-      <MudText>読込件数 更新</MudText>
-    }
-  </MudButton>
-</div>
-<div class="d-inline-flex flex-wrap mt-1">
-  @*Filterable*@
-  <MudSwitch @bind-Checked="@_filter" Label="Filterable" />
-  &nbsp;&nbsp;&nbsp;
-  @*FilterMode*@
-  <MudSelect @bind-Value="@_filterMode" T="DataGridFilterMode" Label="FilterMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@DataGridFilterMode.Simple" />
-    <MudSelectItem Value="@DataGridFilterMode.ColumnFilterMenu" />
-    <MudSelectItem Value="@DataGridFilterMode.ColumnFilterRow" />
-  </MudSelect>
-  &nbsp;&nbsp;&nbsp;
-  @*FilterCaseSensitivity*@
-  <MudSelect @bind-Value="@_caseSensitivity" T="DataGridFilterCaseSensitivity" Label="FilterCaseSensitivity" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@DataGridFilterCaseSensitivity.Default" />
-    <MudSelectItem Value="@DataGridFilterCaseSensitivity.CaseInsensitive" />
-  </MudSelect>
-  &nbsp;&nbsp;&nbsp;
-  @*SortMode*@
-  <MudSelect @bind-Value="@_sortMode" T="SortMode" Label="SortMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@SortMode.None" />
-    <MudSelectItem Value="@SortMode.Single" />
-    <MudSelectItem Value="@SortMode.Multiple" />
-  </MudSelect>
-  &nbsp;&nbsp;&nbsp;
-  @*ResizeMode*@
-  <MudSelect @bind-Value="@_resizeMode" T="ResizeMode" Label="ResizeMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@ResizeMode.None" />
-    <MudSelectItem Value="@ResizeMode.Column" />
-    <MudSelectItem Value="@ResizeMode.Container" />
-  </MudSelect>
-</div>
-<div class="d-inline-flex mt-1">
-  @*Reordering*@
-  <MudSwitch @bind-Checked="@_reorderingEnabled" Color="Color.Primary" Label="DragDropColumnReordering" />
-  <MudSwitch @bind-Checked="@_applyDropClassesOnDragStarted" Color="Color.Primary" Label="ApplyDropClassesOnDragStarted" />
-  @*Etc*@
-  <MudSwitch @bind-Checked="@_hover" Color="Color.Primary" Label="Hover" />
-  <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary" Label="Dense" />
-  <MudSwitch @bind-Checked="@_striped" Color="Color.Tertiary" Label="Striped" />
-  <MudSwitch @bind-Checked="@_bordered" Color="Color.Warning" Label="Bordered" />
-  <MudSwitch @bind-Checked="@_stickyLeft" Color="Color.Info" Label="StickyLeft" />
-</div>
+<div class="d-inline-flex flex-wrap align-items-baseline mt-4">
+  <MudText>読込件数:</MudText>&nbsp;&nbsp;&nbsp;
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="MudBlazor.Variant.Outlined" Min="5" Max="40000" Step="1000" />&nbsp;&nbsp;&nbsp;
+  <MudButton Disabled="@_loading" OnClick="ProcessSomething" Variant="MudBlazor.Variant.Filled" Color="MudBlazor.Color.Primary">@(_loading ? "読込中" : "読込")</MudButton>
+  </div>
+  <div class="d-inline-flex flex-wrap align-items-baseline mt-1">
+    @*Filterable*@
+    <MudSwitch @bind-Checked="@_filter" Label="Filterable" />
+    &nbsp;&nbsp;&nbsp;
+    @*FilterMode*@
+    <MudSelect @bind-Value="@_filterMode" T="DataGridFilterMode" Label="FilterMode" Margin="Margin.Dense" Dense="true" Variant="MudBlazor.Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+      <MudSelectItem Value="@DataGridFilterMode.Simple" />
+      <MudSelectItem Value="@DataGridFilterMode.ColumnFilterMenu" />
+      <MudSelectItem Value="@DataGridFilterMode.ColumnFilterRow" />
+    </MudSelect>
+    &nbsp;&nbsp;&nbsp;
+    @*FilterCaseSensitivity*@
+    <MudSelect @bind-Value="@_caseSensitivity" T="DataGridFilterCaseSensitivity" Label="FilterCaseSensitivity" Margin="Margin.Dense" Dense="true" Variant="MudBlazor.Variant.Text" AnchorOrigin="Origin.BottomCenter">
+      <MudSelectItem Value="@DataGridFilterCaseSensitivity.Default" />
+      <MudSelectItem Value="@DataGridFilterCaseSensitivity.CaseInsensitive" />
+    </MudSelect>
+    &nbsp;&nbsp;&nbsp;
+    @*SortMode*@
+    <MudSelect @bind-Value="@_sortMode" T="SortMode" Label="SortMode" Margin="Margin.Dense" Dense="true" Variant="MudBlazor.Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+      <MudSelectItem Value="@SortMode.None" />
+      <MudSelectItem Value="@SortMode.Single" />
+      <MudSelectItem Value="@SortMode.Multiple" />
+    </MudSelect>
+    &nbsp;&nbsp;&nbsp;
+    @*ResizeMode*@
+    <MudSelect @bind-Value="@_resizeMode" T="ResizeMode" Label="ResizeMode" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
+      <MudSelectItem Value="@ResizeMode.None" />
+      <MudSelectItem Value="@ResizeMode.Column" />
+      <MudSelectItem Value="@ResizeMode.Container" />
+    </MudSelect>
+  </div>
+  <div class="d-inline-flex align-items-baseline mt-1">
+    @*Reordering*@
+    <MudSwitch @bind-Checked="@_reorderingEnabled" Color="MudBlazor.Color.Primary" Label="DragDropColumnReordering" />
+    <MudSwitch @bind-Checked="@_applyDropClassesOnDragStarted" Color="MudBlazor.Color.Primary" Label="ApplyDropClassesOnDragStarted" />
+    @*Etc*@
+    <MudSwitch @bind-Checked="@_hover" Color="MudBlazor.Color.Primary" Label="Hover" />
+    <MudSwitch @bind-Checked="@_dense" Color="MudBlazor.Color.Secondary" Label="Dense" />
+    <MudSwitch @bind-Checked="@_striped" Color="MudBlazor.Color.Tertiary" Label="Striped" />
+    <MudSwitch @bind-Checked="@_bordered" Color="MudBlazor.Color.Warning" Label="Bordered" />
+    <MudSwitch @bind-Checked="@_stickyLeft" Color="MudBlazor.Color.Info" Label="StickyLeft" />
+  </div>
 
-@if (_items == null)
+  @if (_items == null)
 {
-  <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+  <MudProgressCircular Color="MudBlazor.Color.Default" Indeterminate="true" />
 }
 else
 {
   <MudBlazor.MudDataGrid T="WeatherForecast" Items="@_items" Elevation="0" QuickFilter="@_quickFilter" Loading="@_loading" SortMode="@_sortMode" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" ColumnResizeMode="@_resizeMode" Filterable="@_filter" Dense="@_dense" Hover="@_hover" Striped="@_striped" Bordered="@_bordered" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">MudDataGrid</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+      <MudText Typo="Typo.h6">MudDataGrid</MudText>
+      <MudSpacer />
+      <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                    AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
-      <PropertyColumn Property="x => x!.Date" title="Date" StickyLeft="@_stickyLeft" />
-      <PropertyColumn Property="x => x!.TemperatureC" title="Temp. (C)" />
-      <PropertyColumn Property="x => x!.TemperatureF" title="Temp. (F)" />
-      <PropertyColumn Property="x => x!.Summary" title="Summary" />
+      <MudBlazor.PropertyColumn Property="x => x!.Date" title="Date" StickyLeft="@_stickyLeft" />
+      <MudBlazor.PropertyColumn Property="x => x!.TemperatureC" title="Temp. (C)" />
+      <MudBlazor.PropertyColumn Property="x => x!.TemperatureF" title="Temp. (F)" />
+      <MudBlazor.PropertyColumn Property="x => x!.Summary" title="Summary" />
     </Columns>
     <PagerContent>
       <MudDataGridPager T="WeatherForecast" PageSizeOptions="new int[]{10, 25, 50, 100, 500, 1000}" />

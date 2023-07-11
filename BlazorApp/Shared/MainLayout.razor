@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
 
+@* 👇 Add this line to place the "UPDATE NOW" button UI. *@
+<Toolbelt.Blazor.PWA.Updater.PWAUpdater />
+
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -11,10 +14,10 @@
 
 <MudLayout>
   <MudAppBar Elevation="0" Dense="true">
-    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="MudBlazor.Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
     <MudSpacer />
-    <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Href="https://mudblazor.com/" Target="_blank" />
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
+    <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="MudBlazor.Color.Inherit" Href="https://mudblazor.com/" Target="_blank" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="MudBlazor.Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
   </MudAppBar>
   <MudDrawer @bind-Open="_drawerOpen" Elevation="1" ClipMode="@DrawerClipMode.Docked" Breakpoint="@Breakpoint.Xs" Style="@_style">
     <MudDrawerHeader>

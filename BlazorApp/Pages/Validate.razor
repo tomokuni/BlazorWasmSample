@@ -3,11 +3,10 @@
 
 <PageTitle>Validation</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Validation MudBlazor</MudText>
 <MudText Class="mb-8">This component demonstrates validate data.</MudText>
 
 
-<MudText Class="mb-8">MudBlazor Component</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Validation MudBlazor</MudText>
 <div class="d-inline-flex mt-1">
 	@*SortMode*@
 	<MudSelect @bind-Value="@_margin" T="Margin" Label="Margin" Margin="Margin.Dense" Dense="true" AnchorOrigin="Origin.BottomCenter">
@@ -48,51 +47,63 @@
 <br />
 <br />
 <br />
-<MudText Class="mb-8">Defalut Blazor Component</MudText>
+<RadzenText TextStyle="TextStyle.H3" Class="mb-8">Radzen Component</RadzenText>
+<RadzenTemplateForm Model="@model" TItem="OrderModel" Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+	<div class="d-inline-flex mt-1" styel="diplay: inline; vertical-align: baseline;">
+		<RadzenFormField Text="Name" Variant="Radzen.Variant.Text">
+			<RadzenTextBox @bind-Value="model.Name" Placeholder="Name" Name="Name" />
+			<RadzenLengthValidator Component="Name" Min="3" Text="Name should be at least 3 characters" Style="position: absolute" />
+		</RadzenFormField>&nbsp;&nbsp;&nbsp;
+	</div>
+</RadzenTemplateForm>
+<br />
+<br />
+<br />
+<MudText Typo="Typo.h3" GutterBottom="true">Defalut Blazor Component</MudText>
 <EditForm Model="@model">
 	<DataAnnotationsValidator />
-	<div styel="diplay: inline; vertical-align: baseline;">
-		<span class="caption">Name <font color="red">*</font> :</span>
-		<span class="input-field">		
-			<InputText @bind-Value="model.Name" class="textbox" />
-			<small><ValidationMessage For="@(() => model.Name)" /></small>
-		</span>
+	<div class="d-inline-flex mt-1">
+		<div styel="diplay: inline; vertical-align: baseline;">
+			<span class="caption">Name <font color="red">*</font> :</span>
+			<span class="input-field">
+				<InputText @bind-Value="model.Name" class="textbox" />
+				<small><ValidationMessage For="@(() => model.Name)" /></small>
+			</span>
+		</div>
+		<div>
+			Date <font color="red">*</font> :
+			<InputDate @bind-Value="model.Date" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Date)" />
+		</div>
 	</div>
-	<br />
-	<div>
-		Date <font color="red">*</font> :
-		<InputDate @bind-Value="model.Date" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Date)" />
+	<div class="d-inline-flex mt-1">
+		<div>
+			Email <font color="red">*</font> :
+			<InputText @bind-Value="model.Email" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Email)" />
+		</div>
+		<div>
+			Phone <font color="red">*</font> :
+			<InputText @bind-Value="model.Phone" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Phone)" />
+		</div>
+		<div>
+			ZipCode <font color="red">*</font> :
+			<InputText @bind-Value="model.Address.ZipCode" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Address.ZipCode)" />
+		</div>
 	</div>
-	<br />
-	<div>
-		Email <font color="red">*</font> :
-		<InputText @bind-Value="model.Email" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Email)" />
-	</div>
-	<br />
-	<div>
-		Phone <font color="red">*</font> :
-		<InputText @bind-Value="model.Phone" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Phone)" />
-	</div>
-	<br />
-	<div>
-		ZipCode <font color="red">*</font> :
-		<InputText @bind-Value="model.Address.ZipCode" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Address.ZipCode)" />
-	</div>
-	<br />
-	<div>
-		Address1 <font color="red">*</font> :
-		<InputText @bind-Value="model.Address.Address1" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Address.Address1)" />
-	</div>
-	<br />
-	<div>
-		Address2 <font color="red">*</font> :
-		<InputText @bind-Value="model.Address.Address2" class="textbox input-field" />
-		<ValidationMessage For="@(() => model.Address.Address2)" />
+	<div class="d-inline-flex mt-1">
+		<div>
+			Address1 <font color="red">*</font> :
+			<InputText @bind-Value="model.Address.Address1" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Address.Address1)" />
+		</div>
+		<div>
+			Address2 <font color="red">*</font> :
+			<InputText @bind-Value="model.Address.Address2" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Address.Address2)" />
+		</div>
 	</div>
 </EditForm>
 
@@ -103,6 +114,13 @@
 	Margin _margin = Margin.Normal;
 	MudBlazor.Variant _valiant = MudBlazor.Variant.Text;
 
+	void OnSubmit(OrderModel model)
+	{
+	}
+
+	void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+	{
+	}
 
 	public class OrderModel
 	{
