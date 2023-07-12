@@ -12,7 +12,7 @@
 @*読込件数設定、読み込み*@
 <div class="d-inline-flex flex-wrap align-items-baseline mt-4">
   <MudText>読込件数:</MudText>&nbsp;&nbsp;&nbsp;
-  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="MudBlazor.Variant.Outlined" Min="5" Max="40000" Step="1000" />&nbsp;&nbsp;&nbsp;
+  <MudNumericField @bind-Value="_dispNumber" Label="読込件数" Variant="MudBlazor.Variant.Outlined" Margin=Margin.Dense Min="5" Max="40000" Step="1000" />&nbsp;&nbsp;&nbsp;
   <MudButton Disabled="@_loading" OnClick="ProcessSomething" Variant="MudBlazor.Variant.Filled" Color="MudBlazor.Color.Primary">@(_loading ? "読込中" : "読込")</MudButton>
   </div>
   <div class="d-inline-flex flex-wrap align-items-baseline mt-1">
@@ -112,7 +112,6 @@ else
   {
     _loading = true;
     _items = new List<WeatherForecast>();
-    await Task.Delay(300);
     await Task.Yield();
 
     string fileName = _dispNumber switch
@@ -125,6 +124,7 @@ else
       _ => "sample-data/weather40000.json"
     };
     _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>(fileName))!.Take(_dispNumber);
+    await Task.Delay(500);
     _loading = false;
   }
 

@@ -26,17 +26,20 @@
 <br />
 <br />
 <MudForm Model="@model">
-	<div class="d-inline-flex mt-1">
+	<div class="d-inline-flex align-items-baseline mt-1">
 		<MudTextField @bind-Value="model.Name" For="@(() => model.Name)" Placeholder="Name" Label="Name *" Variant="_valiant" Margin="_margin" />
 		&nbsp;&nbsp;&nbsp;
-		<MudDatePicker @bind-Date="model.Date" For="@(() => model.Date)" Placeholder="Date" Label="Date" Editable="true" DisableToolbar="true" DisplayMonths="2" Variant="_valiant" Margin="_margin" />
+		<MudDatePicker @bind-Date="model.Date" For="@(() => model.Date)" DateFormat="yyyy/MM/dd" Placeholder="Date" Label="Date" Editable="true" DisableToolbar="true" DisplayMonths="2" Variant="_valiant" Margin="_margin" />
+		<MudTimePicker Label="24 hours (editable)" Editable="true" />
 	</div>
-	<div class="d-inline-flex mt-1">
+	<div class="d-inline-flex align-items-baseline mt-1">
 		<MudTextField @bind-Value="model.Email" For="@(() => model.Email)" Placeholder="Email" Label="Email *" Variant="_valiant" Margin="_margin" />
 	  &nbsp;&nbsp;&nbsp;
 		<MudTextField @bind-Value="model.Phone" For="@(() => model.Phone)" Placeholder="Phone" Label="Phone *" Variant="_valiant" Margin="_margin" />
+		&nbsp;&nbsp;&nbsp;
+		<MudNumericField @bind-Value="model.Number" For="@(() => model.Number)" Placeholder="Number" Label="Number *" Variant="_valiant" Margin="_margin" />
 	</div>
-	<div class="d-inline-flex mt-1">
+	<div class="d-inline-flex align-items-baseline mt-1">
 		<MudTextField @bind-Value="model.Address.ZipCode" For="@(() => model.Address.ZipCode)" Label="ZipCode" Variant="_valiant" Placeholder="ZipCode" Margin="_margin" Style="@_style" />
 		&nbsp;&nbsp;&nbsp;
 		<MudTextField @bind-Value="model.Address.Address1" For="@(() => model.Address.Address1)" Label="Address1" Variant="_valiant" Placeholder="Address1" Margin="_margin" Style="@_style" />
@@ -48,21 +51,36 @@
 <br />
 <br />
 <RadzenText TextStyle="TextStyle.H3" Class="mb-8">Radzen Component</RadzenText>
-<RadzenTemplateForm Model="@model" TItem="OrderModel" Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
-	<div class="d-inline-flex mt-1" styel="diplay: inline; vertical-align: baseline;">
-		<RadzenFormField Text="Name" Variant="Radzen.Variant.Text">
-			<RadzenTextBox @bind-Value="model.Name" Placeholder="Name" Name="Name" />
-			<RadzenLengthValidator Component="Name" Min="3" Text="Name should be at least 3 characters" Style="position: absolute" />
+<!-- <RadzenTemplateForm Model="@model" TItem="OrderModel" Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit> -->
+<EditForm Model="@model">
+	<DataAnnotationsValidator />
+	<div class="d-inline-flex align-items-baseline mt-1">
+		<RadzenFormField Text="Name *" Variant="Radzen.Variant.Text">
+			<RadzenTextBox @bind-Value=@model.Name Placeholder="Name" Name="Name" onchange="" />
+			<small><ValidationMessage For="@(() => model.Name)" /></small>
+		</RadzenFormField>&nbsp;&nbsp;&nbsp;
+		<RadzenFormField Text="Date *" Variant="Radzen.Variant.Text">
+			<RadzenDatePicker @bind-Value=@model.Date ShowTime="true" AllowClear="true" HoursStep="1" MinutesStep="10" DateFormat="yyyy/MM/dd HH:mm">
+				<FooterTemplate>
+					<RadzenButton Click=@(args => model.Date = DateTime.Now) Text="Today" class="my-3 w-100" />
+				</FooterTemplate>
+			</RadzenDatePicker>
+			<small><ValidationMessage For="@(() => model.Date)" /></small>
+		</RadzenFormField>&nbsp;&nbsp;&nbsp;
+		<RadzenFormField Text="Number *" Variant="Radzen.Variant.Text">
+			<RadzenNumeric @bind-Value=@model.Number Placeholder="Number" Name="Number" onchange="" />
+			<small><ValidationMessage For="@(() => model.Number)" /></small>
 		</RadzenFormField>&nbsp;&nbsp;&nbsp;
 	</div>
-</RadzenTemplateForm>
+</EditForm>
+<!-- </RadzenTemplateForm> -->
 <br />
 <br />
 <br />
 <MudText Typo="Typo.h3" GutterBottom="true">Defalut Blazor Component</MudText>
 <EditForm Model="@model">
 	<DataAnnotationsValidator />
-	<div class="d-inline-flex mt-1">
+	<div class="d-inline-flex align-items-baseline mt-1">
 		<div styel="diplay: inline; vertical-align: baseline;">
 			<span class="caption">Name <font color="red">*</font> :</span>
 			<span class="input-field">
@@ -72,11 +90,11 @@
 		</div>
 		<div>
 			Date <font color="red">*</font> :
-			<InputDate @bind-Value="model.Date" class="textbox input-field" />
+			<InputDate  @bind-Value="model.Date" Type="InputDateType.DateTimeLocal" class="textbox input-field" />
 			<ValidationMessage For="@(() => model.Date)" />
 		</div>
 	</div>
-	<div class="d-inline-flex mt-1">
+	<div class="d-inline-flex align-items-baseline mt-1">
 		<div>
 			Email <font color="red">*</font> :
 			<InputText @bind-Value="model.Email" class="textbox input-field" />
@@ -88,12 +106,17 @@
 			<ValidationMessage For="@(() => model.Phone)" />
 		</div>
 		<div>
+			Number <font color="red">*</font> :
+			<InputNumber @bind-Value="model.Number" class="textbox input-field" />
+			<ValidationMessage For="@(() => model.Number)" />
+		</div>
+	</div>
+	<div class="d-inline-flex align-items-baseline mt-1">
+		<div>
 			ZipCode <font color="red">*</font> :
 			<InputText @bind-Value="model.Address.ZipCode" class="textbox input-field" />
 			<ValidationMessage For="@(() => model.Address.ZipCode)" />
 		</div>
-	</div>
-	<div class="d-inline-flex mt-1">
 		<div>
 			Address1 <font color="red">*</font> :
 			<InputText @bind-Value="model.Address.Address1" class="textbox input-field" />
@@ -152,6 +175,9 @@
 
 		[Required]
 		public DateTime? Date { get; set; }
+
+		[Required]
+		public int Number { get; set; }
 	}
 
 }
