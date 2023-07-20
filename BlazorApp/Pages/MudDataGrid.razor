@@ -124,7 +124,7 @@ else
       _ => "sample-data/weather40000.json"
     };
     _items = (await Http.GetFromJsonAsync<List<WeatherForecast>>(fileName))!.Take(_dispNumber);
-    await Task.Delay(500);
+    await Task.Yield();
     _loading = false;
   }
 
